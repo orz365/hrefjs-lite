@@ -1,15 +1,15 @@
-# hrefjs
+# hrefjs-lite
 根据提供的href地址链接，解析出location结构数据，
 参数与json互转
 
 ### 安装
 ```bash
-npm i hrefjs
+npm i hrefjs-lite
 ```
 
 ### 使用
 ```js
-const hrefjs = require('hrefjs')
+const hrefjs = require('hrefjs-lite')
 var location = hrefjs('https://www.cssjs.cn')
 
 // 返回结果
@@ -27,6 +27,7 @@ var location = hrefjs('https://www.cssjs.cn')
 ```
 
 ```js
+const hrefjs = require('hrefjs-lite')
 var json = {
     a: 10,
     b: 20

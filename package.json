@@ -1,6 +1,6 @@
 {
   "name": "hrefjs-lite",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "根据提供的href地址链接，解析出location结构数据，参数与json互转",
   "main": "dist/href.min.js",
   "scripts": {
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/orz365/hrefjs.git"
+    "url": "git+https://github.com/orz365/hrefjs-lite.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/orz365/hrefjs/issues"
+    "url": "https://github.com/orz365/hrefjs-lite/issues"
   },
-  "homepage": "https://github.com/orz365/hrefjs#readme",
+  "homepage": "https://github.com/orz365/hrefjs-lite#readme",
   "keywords": [
     "location",
     "search",
