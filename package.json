@@ -7,8 +7,16 @@
     "test": "node test.js",
     "build": "uglifyjs --compress --mangle -o dist/href.min.js -- src/href.js "
   },
-  "author": "orz365",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/orz365/hrefjs.git"
+  },
+  "author": "",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/orz365/hrefjs/issues"
+  },
+  "homepage": "https://github.com/orz365/hrefjs#readme",
   "keywords": [
     "location",
     "search",
