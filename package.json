@@ -1,0 +1,21 @@
+{
+  "name": "hrefjs",
+  "version": "1.0.0",
+  "description": "根据提供的href地址链接，解析出location结构数据，参数与json互转",
+  "main": "dist/href.min.js",
+  "scripts": {
+    "test": "node test.js",
+    "build": "uglifyjs --compress --mangle -o dist/href.min.js -- src/href.js "
+  },
+  "author": "orz365",
+  "license": "MIT",
+  "keywords": [
+    "location",
+    "search",
+    "href",
+    "hash"
+  ],
+  "devDependencies": {
+    "uglify-js": "^3.12.1"
+  }
+}
