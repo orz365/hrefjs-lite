@@ -1,5 +1,5 @@
 {
-  "name": "hrefjs",
+  "name": "hrefjs-lite",
   "version": "1.0.0",
   "description": "根据提供的href地址链接，解析出location结构数据，参数与json互转",
   "main": "dist/href.min.js",
