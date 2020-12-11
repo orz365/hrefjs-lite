@@ -22,7 +22,8 @@ var location = hrefjs('https://www.cssjs.cn')
   pathname: '',
   port: '',
   protocol: 'https:',
-  search: '' 
+  search: '',
+  searchJson: {}
 }
 ```
 

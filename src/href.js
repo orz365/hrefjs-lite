@@ -12,6 +12,12 @@
     var SEPARATE_SEARCH = '?';
 
     /**
+     * 分隔符 &
+     * @type {string}
+     */
+    var SEPARATE_PARAM = '&';
+
+    /**
      * 将json转换成 &分隔的参数
      * @param json
      * @return {string} &分隔的参数
@@ -21,15 +27,21 @@
         for (var p in json) {
             r.push(p + '=' + json[p]);
         }
-        return r.join('&');
+        return r.join(SEPARATE_PARAM);
     };
     /**
      * &分隔的参数转换成json对象
      * @param param
      */
     var param2json = function(param) {
+        if (typeof param === 'undefined' || param.length === 0) {
+            return {};
+        }
+        if (param.indexOf(SEPARATE_SEARCH) === 0) {
+            param = param.substring(1);
+        }
         var json = {};
-        var r = param.split('&');
+        var r = param.split(SEPARATE_PARAM);
         for (var i = 0; i < r.length; i++) {
             var r2 = r[i].split('=');
             var key = r2[0];
@@ -59,7 +71,9 @@
         //包含URL对应协议 https:
         protocol: '',
         //包含URL参数，开头有一个“?”。
-        search: ''
+        search: '',
+        // 转换后的参数对象
+        searchJson: {},
     };
     var Hrefjs = function(href) {
         if (typeof href !== 'string') {
@@ -75,14 +89,14 @@
         var hash = '';
         if (firstHashIndex !== -1) {
             // href的hash值
-            hash = href.substr(firstHashIndex);
+            hash = href.substring(firstHashIndex);
             hash = hash === SEPARATE_HASH ? '' : hash;
         } else {
             firstHashIndex = hrefLength;
         }
 
         // 不包含hash值的路径
-        var hrefNoHash = href.substr(0, firstHashIndex);
+        var hrefNoHash = href.substring(0, firstHashIndex);
         var firstSearchIndex = hrefNoHash.indexOf(SEPARATE_SEARCH);
         if (firstSearchIndex !== -1) {
 
@@ -90,8 +104,8 @@
             firstSearchIndex = hrefNoHash.length;
         }
 
-        var hrefSPath = hrefNoHash.substr(0, firstSearchIndex);
-        var search = hrefNoHash.substr(firstSearchIndex);
+        var hrefSPath = hrefNoHash.substring(0, firstSearchIndex);
+        var search = hrefNoHash.substring(firstSearchIndex);
 
         var hrefPaths = hrefSPath.split('//');
         var protocol = hrefPaths[0] || 'http:';
@@ -102,8 +116,8 @@
         if (slashIndex === -1) {
             slashIndex = hostWithPath.length;
         }
-        var host = hostWithPath.substr(0, slashIndex);
-        var pathname = hostWithPath.substr(slashIndex);
+        var host = hostWithPath.substring(0, slashIndex);
+        var pathname = hostWithPath.substring(slashIndex);
         var hostname = host.split(':')[0] || '';
         var port = host.split(':')[1] || '';
 
@@ -118,6 +132,8 @@
         location.pathname = pathname;
         location.hostname = hostname;
         location.port = port;
+
+        location.searchJson = param2json(search);
 
         return location;
     };
