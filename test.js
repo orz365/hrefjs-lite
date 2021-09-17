@@ -1,5 +1,5 @@
 const hrefjs = require('./src/href');
-var location = hrefjs('https://www.cssjs.cn')
+var location = hrefjs('https://www.cssjs.cn/test/?a=222#/?a=b')
 console.log(location)
 var json = {
     a: 10,
