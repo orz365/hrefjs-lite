@@ -55,6 +55,9 @@
         //包含块标识符，开头有一个“#”。
         hash: '',
 
+        // 转换后hash的json参数
+        hashJson: {},
+
         //包含了域名的一个DOMString，可能在该串最后带有一个":"并跟上URL的端口号。
         host: '',
         //包含URL域名
@@ -75,6 +78,39 @@
         // 转换后的参数对象
         searchJson: {},
     };
+    // 分解hash值
+    var _splitHash = function (href){
+        var hash = '',hashJson={}, hrefNoHash=''
+
+        // 先处理hash值
+        var firstHashIndex = href.indexOf(SEPARATE_HASH),
+            lastHashIndex = href.lastIndexOf(SEPARATE_HASH)
+
+        var hash = '';
+        if (firstHashIndex !== -1) {
+            // href的hash值
+            hash = href.substring(firstHashIndex);
+            hash = hash === SEPARATE_HASH ? '' : hash;
+
+            var firstSearchIndex = hash.indexOf(SEPARATE_SEARCH);
+            if (firstSearchIndex === -1) {
+                firstSearchIndex = hash.length;
+            }
+            var hashParam = hash.substring(firstSearchIndex);
+            hashJson = param2json(hashParam)
+
+        } else {
+            firstHashIndex = href.length;
+        }
+        // 不包含hash值的路径
+        var hrefNoHash = href.substring(0, firstHashIndex);
+
+        return {
+            hash: hash,
+            hashJson: hashJson,
+            hrefNoHash: hrefNoHash
+        };
+    }
     var Hrefjs = function(href) {
         if (typeof href !== 'string') {
             return location;
@@ -84,23 +120,10 @@
 
         location.href = href;
 
-        var firstHashIndex = href.indexOf(SEPARATE_HASH);
+        var {hash, hashJson, hrefNoHash} = _splitHash(href)
 
-        var hash = '';
-        if (firstHashIndex !== -1) {
-            // href的hash值
-            hash = href.substring(firstHashIndex);
-            hash = hash === SEPARATE_HASH ? '' : hash;
-        } else {
-            firstHashIndex = hrefLength;
-        }
-
-        // 不包含hash值的路径
-        var hrefNoHash = href.substring(0, firstHashIndex);
         var firstSearchIndex = hrefNoHash.indexOf(SEPARATE_SEARCH);
-        if (firstSearchIndex !== -1) {
-
-        } else {
+        if (firstSearchIndex === -1) {
             firstSearchIndex = hrefNoHash.length;
         }
 
@@ -123,6 +146,8 @@
 
         // Location.hash
         location.hash = hash;
+        // Location.hashJson
+        location.hashJson = hashJson;
         // Location.search
         location.search = search;
         // Location.protocol
