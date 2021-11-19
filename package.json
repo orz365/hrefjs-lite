@@ -1,6 +1,6 @@
 {
   "name": "hrefjs-lite",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "根据提供的href地址链接，解析出location结构数据，参数与json互转",
   "main": "dist/href.min.js",
   "scripts": {
@@ -21,7 +21,8 @@
     "location",
     "search",
     "href",
-    "hash"
+    "hash",
+    "json"
   ],
   "devDependencies": {
     "uglify-js": "^3.12.1"
