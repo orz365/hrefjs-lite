@@ -10,20 +10,21 @@ npm i hrefjs-lite
 ### 使用
 ```js
 const hrefjs = require('hrefjs-lite')
-var location = hrefjs('https://www.cssjs.cn')
+var location = hrefjs('https://www.cssjs.cn?name=wilder#/fly?a=10')
 
 // 返回结果
-{ 
-  hash: '',
+{
+  hash: '#/fly?a=10',
+  hashJson: { a: '10' },
   host: 'www.cssjs.cn',
   hostname: 'www.cssjs.cn',
-  href: 'https://www.cssjs.cn',
+  href: 'https://www.cssjs.cn?name=wilder#/fly?a=10',
   origin: '',
   pathname: '',
   port: '',
   protocol: 'https:',
-  search: '',
-  searchJson: {}
+  search: '?name=wilder',
+  searchJson: { name: 'wilder' }
 }
 ```
 

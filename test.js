@@ -1,5 +1,5 @@
 const hrefjs = require('./src/href');
-var location = hrefjs('https://www.jetbrains.com/shop/eform/opensource/confirmation?email=orz365%40163.com&c=%22%22%27.df#/sdfssd?a=b')
+var location = hrefjs('https://www.cssjs.cn?name=wilder#/fly?a=10')
 
 console.log(location)
 var json = location.searchJson
