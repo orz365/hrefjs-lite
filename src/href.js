@@ -1,28 +1,28 @@
-(function(global, factory) {
+(function (global, factory) {
     if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory(global);
     } else {
         factory(global);
     }
-})(typeof window !== 'undefined' ? window : this, function(window) {
+})(typeof window !== 'undefined' ? window : this, function (window) {
 
-    var SEPARATE_HASH = '#';
+    var SEPARATE_HASH = '#',
 
-    // 参数分隔符，对于一个链接来讲，只可能有路径参数和hash参数两种
-    var SEPARATE_SEARCH = '?';
+        // 参数分隔符，对于一个链接来讲，只可能有路径参数和hash参数两种
+        SEPARATE_SEARCH = '?',
 
-    /**
-     * 分隔符 &
-     * @type {string}
-     */
-    var SEPARATE_PARAM = '&';
+        /**
+         * 分隔符 &
+         * @type {string}
+         */
+        SEPARATE_PARAM = '&';
 
     /**
      * 将json转换成 &分隔的参数
      * @param json
      * @return {string} &分隔的参数
      */
-    var json2param = function(json) {
+    var json2param = function (json) {
         var r = [];
         for (var p in json) {
             r.push(p + '=' + json[p]);
@@ -33,7 +33,7 @@
      * &分隔的参数转换成json对象
      * @param param
      */
-    var param2json = function(param) {
+    var param2json = function (param) {
         if (typeof param === 'undefined' || param.length === 0) {
             return {};
         }
@@ -78,20 +78,27 @@
         // 转换后的参数对象
         searchJson: {},
     };
-    // 分解hash值
-    var _splitHash = function (href){
-        var hash = '',hashJson={}, hrefNoHash=''
+    /**
+     * 分解hash值，如果含有多个#号，则第一个表示hash参数，后面的都是字符串
+     * @param href 地址
+     * @return {{hrefNoHash: string, hashJson: {}, hash: string}}
+     * @private
+     */
+    var _splitHash = function (href) {
+        var hash = '', hashJson = {}, hrefNoHash = ''
 
         // 先处理hash值
         var firstHashIndex = href.indexOf(SEPARATE_HASH),
             lastHashIndex = href.lastIndexOf(SEPARATE_HASH)
 
         var hash = '';
+
         if (firstHashIndex !== -1) {
             // href的hash值
             hash = href.substring(firstHashIndex);
             hash = hash === SEPARATE_HASH ? '' : hash;
 
+            // 处理hash值?的参数
             var firstSearchIndex = hash.indexOf(SEPARATE_SEARCH);
             if (firstSearchIndex === -1) {
                 firstSearchIndex = hash.length;
@@ -108,10 +115,10 @@
         return {
             hash: hash,
             hashJson: hashJson,
-            hrefNoHash: hrefNoHash
+            hrefNoHash: hrefNoHash,
         };
     }
-    var Hrefjs = function(href) {
+    var Hrefjs = function (href) {
         if (typeof href !== 'string') {
             return location;
         }
