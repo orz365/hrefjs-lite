@@ -103,6 +103,7 @@
             if (firstSearchIndex === -1) {
                 firstSearchIndex = hash.length;
             }
+            var hashPath = hash.substring(0, firstSearchIndex)
             var hashParam = hash.substring(firstSearchIndex);
             hashJson = param2json(hashParam)
 
@@ -114,6 +115,7 @@
 
         return {
             hash: hash,
+            hashPath: hashPath,
             hashJson: hashJson,
             hrefNoHash: hrefNoHash,
         };
@@ -127,7 +129,7 @@
 
         location.href = href;
 
-        var {hash, hashJson, hrefNoHash} = _splitHash(href)
+        var {hash,hashPath, hashJson, hrefNoHash} = _splitHash(href)
 
         var firstSearchIndex = hrefNoHash.indexOf(SEPARATE_SEARCH);
         if (firstSearchIndex === -1) {
@@ -153,8 +155,14 @@
 
         // Location.hash
         location.hash = hash;
+        /**
+         * @deprecated
+         */
+        location.hashPath = hashPath;
         // Location.hashJson
-        location.hashJson = hashJson;
+        // location.hashJson = hashJson;
+        location.hashSearch = json2param(hashJson)==''?'':'?'+json2param(hashJson);
+        location.hashSearchJson = hashJson
         // Location.search
         location.search = search;
         // Location.protocol
@@ -169,8 +177,27 @@
 
         return location;
     };
+
+    /**
+     * 将解析的location参数，反编译回url
+     * 参数根据json来编译，可改变json值来增加或减少参数
+     * @param location
+     */
+    var revert = function (location){
+        var protocal = location.protocol,
+            hostname = location.hostname,
+            port = location.port,
+            pathname = location.pathname,
+            search = json2param(location.searchJson)==''?'':'?'+json2param(location.searchJson),
+            hashPath = location.hashPath,
+            hashSearch = json2param(location.hashSearchJson)==''?'':'?'+json2param(location.hashSearchJson)
+
+        return protocal + '//' + hostname + ':' + port + pathname + search + hashPath + hashSearch
+    }
+
     Hrefjs.json2param = json2param;
     Hrefjs.param2json = param2json;
+    Hrefjs.revert = revert;
 
     window.Hrefjs = Hrefjs;
 

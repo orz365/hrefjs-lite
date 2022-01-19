@@ -41,3 +41,12 @@ param = 'a=10&b=20'
 json = hrefjs.param2json(param)   
 //{ a: '10', b: '20' }
 ```
+
+### 根据上面的location结果恢复url
+```js
+location.searchJson = {
+    name: 'Tom'
+}
+hrefjs.revert(location)
+// https://www.cssjs.cn/tt/bb?name=Tome#/fly?a=20
+```

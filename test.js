@@ -1,15 +1,6 @@
 const hrefjs = require('./src/href');
-var location = hrefjs('https://www.cssjs.cn?name=wilder#/fly?a=10')
+var location = hrefjs('https://www.cssjs.cn/tt/bb?name=wilder#/fly?a=10&a=20')
 
-console.log(location)
-var json = location.searchJson
+location.searchJson.name = 'Tome'
 
-console.log(decodeURIComponent(json.c))
-var json = {
-    a: 10,
-    b: 20
-};
-var param = hrefjs.json2param(json);
-
-json = hrefjs.param2json(param);
-console.log(json);
+console.log(hrefjs.revert(location))
