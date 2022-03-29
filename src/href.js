@@ -192,7 +192,9 @@
             hashPath = location.hashPath,
             hashSearch = json2param(location.hashSearchJson)==''?'':'?'+json2param(location.hashSearchJson)
 
-        return protocal + '//' + hostname + ':' + port + pathname + search + hashPath + hashSearch
+        var portStr = port==""?"":":"+port
+
+        return protocal + '//' + hostname + portStr + pathname + search + hashPath + hashSearch
     }
 
     Hrefjs.json2param = json2param;
