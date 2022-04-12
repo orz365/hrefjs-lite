@@ -1,17 +1,17 @@
 {
   "name": "hrefjs-lite",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "根据提供的href地址链接，解析出location结构数据，参数与json互转",
-  "main": "dist/href.min.js",
+  "main": "dist/hrefjs-lite.js",
   "scripts": {
-    "test": "node test.js",
-    "build": "uglifyjs --compress --mangle -o dist/href.min.js -- src/href.js "
+    "build": "rollup -i ./src/hrefjs-lite.js -o ./dist/hrefjs-lite.js -f umd --name 'Hrefjs'",
+    "postbuild": "terser -c -m -o ./dist/hrefjs-lite.min.js -- ./dist/hrefjs-lite.js "
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/orz365/hrefjs-lite.git"
   },
-  "author": "",
+  "author": "wilderliu",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/orz365/hrefjs-lite/issues"
@@ -25,6 +25,7 @@
     "json"
   ],
   "devDependencies": {
-    "uglify-js": "^3.12.1"
+    "rollup": "^2.70.1",
+    "terser": "^5.12.1"
   }
 }

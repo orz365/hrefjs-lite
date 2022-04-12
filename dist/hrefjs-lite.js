@@ -1,10 +1,8 @@
 (function (global, factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(global);
-    } else {
-        factory(global);
-    }
-})(typeof window !== 'undefined' ? window : this, function (window) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+    typeof define === 'function' && define.amd ? define(factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Hrefjs = factory());
+})(this, (function () { 'use strict';
 
     var SEPARATE_HASH = '#',
 
@@ -85,11 +83,11 @@
      * @private
      */
     var _splitHash = function (href) {
-        var hash = '', hashJson = {}, hrefNoHash = ''
+        var hash = '', hashJson = {}, hrefNoHash = '';
 
         // 先处理hash值
-        var firstHashIndex = href.indexOf(SEPARATE_HASH),
-            lastHashIndex = href.lastIndexOf(SEPARATE_HASH)
+        var firstHashIndex = href.indexOf(SEPARATE_HASH);
+            href.lastIndexOf(SEPARATE_HASH);
 
         var hash = '';
 
@@ -103,9 +101,9 @@
             if (firstSearchIndex === -1) {
                 firstSearchIndex = hash.length;
             }
-            var hashPath = hash.substring(0, firstSearchIndex)
+            var hashPath = hash.substring(0, firstSearchIndex);
             var hashParam = hash.substring(firstSearchIndex);
-            hashJson = param2json(hashParam)
+            hashJson = param2json(hashParam);
 
         } else {
             firstHashIndex = href.length;
@@ -119,17 +117,17 @@
             hashJson: hashJson,
             hrefNoHash: hrefNoHash,
         };
-    }
+    };
     var Hrefjs = function (href) {
         if (typeof href !== 'string') {
             return location;
         }
         // href路径的长度
-        var hrefLength = href.length;
+        href.length;
 
         location.href = href;
 
-        var {hash,hashPath, hashJson, hrefNoHash} = _splitHash(href)
+        var {hash,hashPath, hashJson, hrefNoHash} = _splitHash(href);
 
         var firstSearchIndex = hrefNoHash.indexOf(SEPARATE_SEARCH);
         if (firstSearchIndex === -1) {
@@ -162,7 +160,7 @@
         // Location.hashJson
         // location.hashJson = hashJson;
         location.hashSearch = json2param(hashJson)==''?'':'?'+json2param(hashJson);
-        location.hashSearchJson = hashJson
+        location.hashSearchJson = hashJson;
         // Location.search
         location.search = search;
         // Location.protocol
@@ -190,18 +188,17 @@
             pathname = location.pathname,
             search = json2param(location.searchJson)==''?'':'?'+json2param(location.searchJson),
             hashPath = location.hashPath,
-            hashSearch = json2param(location.hashSearchJson)==''?'':'?'+json2param(location.hashSearchJson)
+            hashSearch = json2param(location.hashSearchJson)==''?'':'?'+json2param(location.hashSearchJson);
 
-        var portStr = port==""?"":":"+port
+        var portStr = port==""?"":":"+port;
 
         return protocal + '//' + hostname + portStr + pathname + search + hashPath + hashSearch
-    }
+    };
 
     Hrefjs.json2param = json2param;
     Hrefjs.param2json = param2json;
     Hrefjs.revert = revert;
 
-    window.Hrefjs = Hrefjs;
-
     return Hrefjs;
-});
+
+}));
