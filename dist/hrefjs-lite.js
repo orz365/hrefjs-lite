@@ -1,204 +1,129 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define(factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Hrefjs = factory());
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Hrefjs = factory());
 })(this, (function () { 'use strict';
 
-    var SEPARATE_HASH = '#',
-
-        // 参数分隔符，对于一个链接来讲，只可能有路径参数和hash参数两种
-        SEPARATE_SEARCH = '?',
-
-        /**
-         * 分隔符 &
-         * @type {string}
-         */
-        SEPARATE_PARAM = '&';
-
-    /**
-     * 将json转换成 &分隔的参数
-     * @param json
-     * @return {string} &分隔的参数
-     */
-    var json2param = function (json) {
-        var r = [];
-        for (var p in json) {
-            r.push(p + '=' + json[p]);
-        }
-        return r.join(SEPARATE_PARAM);
-    };
-    /**
-     * &分隔的参数转换成json对象
-     * @param param
-     */
-    var param2json = function (param) {
-        if (typeof param === 'undefined' || param.length === 0) {
-            return {};
-        }
-        if (param.indexOf(SEPARATE_SEARCH) === 0) {
-            param = param.substring(1);
-        }
-        var json = {};
-        var r = param.split(SEPARATE_PARAM);
-        for (var i = 0; i < r.length; i++) {
-            var r2 = r[i].split('=');
-            var key = r2[0];
-            var value = r2[1];
-            json[key] = value;
-        }
-        return json;
-    };
-
-    var location = {
-        //包含块标识符，开头有一个“#”。
-        hash: '',
-
-        // 转换后hash的json参数
-        hashJson: {},
-
-        //包含了域名的一个DOMString，可能在该串最后带有一个":"并跟上URL的端口号。
-        host: '',
-        //包含URL域名
-        hostname: '',
-        // 完整路径
-        href: '',
-        //包含页面来源的域名的标准形式
-        origin: '',
-
-        //包含URL中路径部分，开头有一个“/"。
-        pathname: '',
-        // 80
-        port: 80,
-        //包含URL对应协议 https:
-        protocol: '',
-        //包含URL参数，开头有一个“?”。
-        search: '',
-        // 转换后的参数对象
-        searchJson: {},
-    };
-    /**
-     * 分解hash值，如果含有多个#号，则第一个表示hash参数，后面的都是字符串
-     * @param href 地址
-     * @return {{hrefNoHash: string, hashJson: {}, hash: string}}
-     * @private
-     */
-    var _splitHash = function (href) {
-        var hash = '', hashJson = {}, hrefNoHash = '';
-
-        // 先处理hash值
-        var firstHashIndex = href.indexOf(SEPARATE_HASH);
-            href.lastIndexOf(SEPARATE_HASH);
-
-        var hash = '';
-
-        if (firstHashIndex !== -1) {
-            // href的hash值
-            hash = href.substring(firstHashIndex);
-            hash = hash === SEPARATE_HASH ? '' : hash;
-
-            // 处理hash值?的参数
-            var firstSearchIndex = hash.indexOf(SEPARATE_SEARCH);
-            if (firstSearchIndex === -1) {
-                firstSearchIndex = hash.length;
-            }
-            var hashPath = hash.substring(0, firstSearchIndex);
-            var hashParam = hash.substring(firstSearchIndex);
-            hashJson = param2json(hashParam);
-
+  /**
+   * 将json转换成 &分隔的参数
+   * @param json
+   * @return {string} &分隔的参数
+   */
+  const json2param = function(json) {
+    const r = [];
+    for (const p in json) {
+      if (Array.isArray(json[p])) {
+        json[p].forEach(value => {
+          r.push(`${p}=${value}`);
+        });
+      } else {
+        r.push(p + '=' + json[p]);
+      }
+    }
+    return r.join('&')
+  };
+  /**
+   * &分隔的参数转换成json对象
+   * @param param
+  */
+  const param2json = function(param) {
+    const searchParams = {};
+    if (param) {
+      const queries = param.split('&');
+      queries.forEach(function(query) {
+        const pair = query.split('=');
+        const name = decodeURIComponent(pair[0]);
+        const value = decodeURIComponent(pair[1]);
+        if (!searchParams[name]) {
+          searchParams[name] = value;
+        } else if (Array.isArray(searchParams[name])) {
+          searchParams[name].push(value);
         } else {
-            firstHashIndex = href.length;
+          searchParams[name] = [searchParams[name], value];
         }
-        // 不包含hash值的路径
-        var hrefNoHash = href.substring(0, firstHashIndex);
+      });
+    }
+    return searchParams
+  };
 
-        return {
-            hash: hash,
-            hashPath: hashPath,
-            hashJson: hashJson,
-            hrefNoHash: hrefNoHash,
-        };
-    };
-    var Hrefjs = function (href) {
-        if (typeof href !== 'string') {
-            return location;
-        }
-        // href路径的长度
-        href.length;
+  const revert = function(location) {
+    const protocal = location.protocol;
+    const hostname = location.hostname;
+    const port = location.port;
+    const pathname = location.pathname;
+    const search = json2param(location.searchParams) === '' ? '' : '?' + json2param(location.searchParams);
+    const hashPath = location.hashPath;
+    const hashSearch = json2param(location.hashSearchParams) === '' ? '' : '?' + json2param(location.hashSearchParams);
+    const portStr = port === '' ? '' : ':' + port;
+    return protocal + '//' + hostname + portStr + pathname + search + '#' + hashPath + hashSearch
+  };
 
-        location.href = href;
+  var urlUtils = {
+    revert,
+    json2param,
+    param2json
+  };
 
-        var {hash,hashPath, hashJson, hrefNoHash} = _splitHash(href);
+  /*
+  这个正则表达式用于解析URL，将URL分解为协议、用户名、密码、主机名、端口号、路径、查询参数和哈希等各个部分。下面逐个说明各个部分的含义：
 
-        var firstSearchIndex = hrefNoHash.indexOf(SEPARATE_SEARCH);
-        if (firstSearchIndex === -1) {
-            firstSearchIndex = hrefNoHash.length;
-        }
+  - `^([^:]+):\/\/`：匹配URL中的协议部分，其中`[^:]+`表示匹配除了冒号以外的任意字符，`\/\/`表示匹配双斜杠。
 
-        var hrefSPath = hrefNoHash.substring(0, firstSearchIndex);
-        var search = hrefNoHash.substring(firstSearchIndex);
+  - `(?:([^@]+)@)?`：匹配URL中的用户名和密码部分，其中`(?:...)`表示非捕获分组，`[^@]+`表示匹配除了@符号以外的任意字符，`@`表示匹配@符号。由于用户名和密码之间用冒号分隔，因此这个正则表达式并没有直接匹配冒号，而是将整个用户名和密码部分作为一个可选的非捕获分组。
 
-        var hrefPaths = hrefSPath.split('//');
-        var protocol = hrefPaths[0] || 'http:';
+  - `([^:/?#]+)`：匹配URL中的主机名部分，其中`[^:/?#]+`表示匹配除了冒号、斜杠、问号和井号以外的任意字符，这里用来匹配主机名。
 
-        var hostWithPath = hrefPaths[1] || '';
-        var slashIndex = hostWithPath.indexOf('/');
+  - `(?::(\d+))?`：匹配URL中的端口号部分，其中`(?::...)`表示一个可选的非捕获分组，`(\d+)`表示匹配一个或多个数字。
 
-        if (slashIndex === -1) {
-            slashIndex = hostWithPath.length;
-        }
-        var host = hostWithPath.substring(0, slashIndex);
-        var pathname = hostWithPath.substring(slashIndex);
-        var hostname = host.split(':')[0] || '';
-        var port = host.split(':')[1] || '';
+  - `([^?#]*)`：匹配URL中的路径部分，其中`[^?#]*`表示匹配除了问号和井号以外的任意字符，这里用来匹配路径。
 
-        // Location.hash
-        location.hash = hash;
-        /**
-         * @deprecated
-         */
-        location.hashPath = hashPath;
-        // Location.hashJson
-        // location.hashJson = hashJson;
-        location.hashSearch = json2param(hashJson)==''?'':'?'+json2param(hashJson);
-        location.hashSearchJson = hashJson;
-        // Location.search
-        location.search = search;
-        // Location.protocol
-        location.protocol = protocol;
-        // Location.host
-        location.host = host;
-        location.pathname = pathname;
-        location.hostname = hostname;
-        location.port = port;
+  - `(?:\?([^#]*))?`：匹配URL中的查询参数部分，其中`\?`表示匹配问号，`(?:...)`表示一个可选的非捕获分组，`[^#]*`表示匹配除了井号以外的任意字符，这里用来匹配查询参数。需要注意的是，查询参数可能出现多个相同的参数名，因此在后续解析过程中需要特别处理。
 
-        location.searchJson = param2json(search);
+  - `(?:#(.*))?`：匹配URL中的哈希部分，其中`\#`表示匹配井号，`(?:...)`表示一个可选的非捕获分组，`.*`表示匹配任意字符，这里用来匹配哈希。需要注意的是，哈希部分不会被发送到服务器，它通常用于标记文档中的特定部分，或者用于客户端跳转。
+  综上所述，这个正则表达式用于将URL分解为各个部分，并将其封装在一个JavaScript对象中返回。需要注意的是，这个正则表达式只能解析标准的URL格式，对于一些非标准格式的URL可能无法正确解析。
+  */
 
-        return location;
+  function Hrefjs(url) {
+    const pattern = /^(.+)\/\/(?:([^@]+)@)?([^:/?#]+)(?::(\d+))?([^?#]*)(?:\?([^#]*))?(?:#(.*))?$/;
+    const matches = url.match(pattern);
+    console.log(matches);
+    const location = {
+      protocol: matches[1],
+      username: matches[2] ? matches[2].split(':')[0] : undefined,
+      password: matches[2] ? matches[2].split(':')[1] : undefined,
+      hostname: matches[3],
+      port: matches[4] || '',
+      pathname: matches[5],
+      search: matches[6] || '',
+      hash: matches[7] || ''
     };
 
-    /**
-     * 将解析的location参数，反编译回url
-     * 参数根据json来编译，可改变json值来增加或减少参数
-     * @param location
-     */
-    var revert = function (location){
-        var protocal = location.protocol,
-            hostname = location.hostname,
-            port = location.port,
-            pathname = location.pathname,
-            search = json2param(location.searchJson)==''?'':'?'+json2param(location.searchJson),
-            hashPath = location.hashPath,
-            hashSearch = json2param(location.hashSearchJson)==''?'':'?'+json2param(location.hashSearchJson);
+    // 处理search
+    location.searchParams = urlUtils.param2json(location.search);
 
-        var portStr = port==""?"":":"+port;
+    // 处理hash
+    if (location.hash) {
+      const hashPathSearch = location.hash.split('?');
+      const hashPath = hashPathSearch[0];
+      const hashSearch = hashPathSearch[1];
 
-        return protocal + '//' + hostname + portStr + pathname + search + hashPath + hashSearch
+      location.hashPath = hashPath;
+      location.hashSearch = hashSearch;
+      if (hashSearch) {
+        location.hashSearchParams = urlUtils.param2json(hashSearch);
+      }
+    }
+
+    location.toString = function() {
+      return urlUtils.revert(this)
     };
 
-    Hrefjs.json2param = json2param;
-    Hrefjs.param2json = param2json;
-    Hrefjs.revert = revert;
+    return location
+  }
 
-    return Hrefjs;
+  Hrefjs.json2param = urlUtils.json2param;
+  Hrefjs.param2json = urlUtils.param2json;
+
+  return Hrefjs;
 
 }));

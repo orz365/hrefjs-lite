@@ -1,6 +1,6 @@
-const hrefjs = require('./dist/hrefjs-lite.min');
-var location = hrefjs('https://www.cssjs.cn/tt/bb?name=wilder#/fly?a=10&a=20')
+import Hrefjs from './src/hrefjs-lite2.js'
 
-location.searchJson.name = 'Tome'
-console.log(location)
-console.log(hrefjs.revert(location))
+const url = 'https://www.cssjs.cn:92/tt/bb#/fly?a=10&a=20&a=30'
+const location = new Hrefjs(url)
+
+console.log(location.toString())
