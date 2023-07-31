@@ -46,6 +46,11 @@
     return searchParams
   };
 
+  /**
+   * 将json地址转成实际地址
+   * @param {object} location
+   * @returns url地址
+   */
   const revert = function(location) {
     const protocal = location.protocol;
     const hostname = location.hostname;
@@ -86,8 +91,8 @@
   function Hrefjs(url) {
     const pattern = /^(.+)\/\/(?:([^@]+)@)?([^:/?#]+)(?::(\d+))?([^?#]*)(?:\?([^#]*))?(?:#(.*))?$/;
     const matches = url.match(pattern);
-    console.log(matches);
     const location = {
+      href: url,
       protocol: matches[1],
       username: matches[2] ? matches[2].split(':')[0] : undefined,
       password: matches[2] ? matches[2].split(':')[1] : undefined,
@@ -100,6 +105,7 @@
 
     // 处理search
     location.searchParams = urlUtils.param2json(location.search);
+    location.searchJson = location.searchParams;
 
     // 处理hash
     if (location.hash) {
@@ -111,6 +117,7 @@
       location.hashSearch = hashSearch;
       if (hashSearch) {
         location.hashSearchParams = urlUtils.param2json(hashSearch);
+        location.hashSearchJson = location.hashSearchParams;
       }
     }
 
