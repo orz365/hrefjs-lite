@@ -36,6 +36,7 @@ function Hrefjs(url) {
 
   // 处理search
   location.searchParams = urlUtils.param2json(location.search)
+  location.searchJson = location.searchParams
 
   // 处理hash
   if (location.hash) {
@@ -47,6 +48,7 @@ function Hrefjs(url) {
     location.hashSearch = hashSearch
     if (hashSearch) {
       location.hashSearchParams = urlUtils.param2json(hashSearch)
+      location.hashSearchJson = location.hashSearchParams
     }
   }
 
