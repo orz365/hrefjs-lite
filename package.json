@@ -1,12 +1,15 @@
 {
   "name": "hrefjs-lite",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "根据提供的href地址链接，解析出location结构数据，参数与json互转",
   "main": "dist/hrefjs-lite.js",
+  "module": "dist/hrefjs-lite-es.js",
   "type": "module",
   "scripts": {
     "build": "rollup -i ./src/hrefjs-lite2.js -o ./dist/hrefjs-lite.js -f umd --name 'Hrefjs'",
-    "postbuild": "terser -c -m -o ./dist/hrefjs-lite.min.js -- ./dist/hrefjs-lite.js "
+    "build:es": "rollup -i ./src/hrefjs-lite2.js -o ./dist/hrefjs-lite-es.js -f es --name 'Hrefjs'",
+    "postbuild": "terser -c -m -o ./dist/hrefjs-lite.min.js -- ./dist/hrefjs-lite.js ",
+    "postbuild:es": "terser -c -m -o ./dist/hrefjs-lite-es.min.js -- ./dist/hrefjs-lite-es.js"
   },
   "repository": {
     "type": "git",
